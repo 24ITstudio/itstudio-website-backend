@@ -1,4 +1,5 @@
-from datetime import timedelta, datetime
+
+from datetime import timedelta, datetime, timezone
 from django.db import models
 
 EmailFieldInst = models.EmailField(
@@ -11,10 +12,20 @@ class VerifyCodeModel(models.Model):
     # this field allows at least 0-2147483647
     code = models.PositiveIntegerField()
     send_time = models.DateTimeField(auto_now=True)
+    # XXX: auto_now=True will add a datetime with timezone.utc
+    #   a.k.a. an aware datetime
     def is_alive(self) -> bool:
         send_time = self.send_time
-        ddl = datetime.now() - DELTA
+        ddl = datetime.now(timezone.utc) - DELTA
         return send_time >= ddl
+    def try_remove_if_unalive(self) -> bool:
+        ## returns if unalive
+        res = not self.is_alive()
+        if res:
+            self.delete()
+        return res
+    def __str__(self) -> str:
+        return self.email
 
 def genIntegerChoices(ls, start=0):
     return list(zip(range(start, len(ls)+start), ls))

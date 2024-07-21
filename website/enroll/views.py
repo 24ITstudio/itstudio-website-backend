@@ -37,8 +37,7 @@ def send(request):
             return JsonResponse(dict(detail="邮箱格式错误"), status=422)
 
     if obj is not None:
-        if not obj.is_alive():
-            obj.delete()
+        if obj.try_remove_if_unalive():
             res = create_new()
             if res is not None:
                 return res

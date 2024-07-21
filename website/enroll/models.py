@@ -96,3 +96,37 @@ class EnrollModel(models.Model):
 
     def __str__(self):
         return self.name
+
+    STATUS_QUERY_CAND = (
+        'email', 'phone', 'qq')
+    STATUS_QUERY_FUZZY_CAND = ('name',)  # name is not unique
+
+    class NotFoundError(LookupError): pass
+    class NotUniqueError(LookupError): pass
+    @classmethod
+    def get_status(cls, d: dict) -> tuple[int, str]:
+        key = val = ''
+        for cand in cls.STATUS_QUERY_CAND:
+            val = d.get(cand, None)
+            if val is not None:
+                key = cand
+                break
+        if key == '':
+            for cand in cls.STATUS_QUERY_FUZZY_CAND:
+                val = d.get(cand, None)
+                if val is not None:
+                    key = cand
+                    break
+            if key == '': raise KeyError("no valid item used as key to look up")
+        
+        sets = cls.objects.filter(**{key: val})
+        le = len(sets)
+        if le == 0:
+            raise cls.NotFoundError("found no record via {}={}"
+                      .format(key, val))
+        if le != 1:
+            raise cls.NotUniqueError("%d records found"%le)
+        item: EnrollModel = sets.first()
+        idx = item.status
+        status = cls.get_status_str(idx)
+        return (idx, status)

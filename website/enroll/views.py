@@ -73,3 +73,19 @@ class EnrollViewSet(ModelViewSet):
    queryset = EnrollModel.objects.all()
    serializer_class = EnrollSerializer
  
+
+@api_view(['POST'])
+def get_status(request: Request) -> Response:
+    try:
+        tup = EnrollModel.get_status(request.data)
+    except KeyError as e:
+        return err_response(str(e), status=400)
+    except EnrollModel.NotFoundError as e:
+        return err_response(str(e), status=404)
+    except EnrollModel.NotUniqueError as e:
+        return err_response(str(e), status=406) # or maybe 300
+    else:
+        (idx, progress) = tup
+        return Response(
+            dict(idx=idx, progress=progress),
+        )

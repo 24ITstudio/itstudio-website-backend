@@ -25,5 +25,6 @@ urlpatterns = [
     path("enroll/", enrollViews.EnrollViewSet.as_view(
         {'post': 'create'}
     )),
+    path("progress/", enrollViews.get_status),
     path("bbs/", CommentView.as_view()),
 ]

@@ -1,16 +1,20 @@
+from datetime import timedelta, datetime
 from django.db import models
-
-# Create your models here.
 
 EmailFieldInst = models.EmailField(
     max_length=36, unique=True, verbose_name="邮箱")
+
+DELTA = timedelta(minutes=10)
 
 class VerifyCodeModel(models.Model):
     email = EmailFieldInst
     # this field allows at least 0-2147483647
     code = models.PositiveIntegerField()
     send_time = models.DateTimeField(auto_now=True)
-
+    def is_alive(self) -> bool:
+        send_time = self.send_time
+        ddl = datetime.now() - DELTA
+        return send_time >= ddl
 
 def genIntegerChoices(ls, start=0):
     return list(zip(range(start, len(ls)+start), ls))

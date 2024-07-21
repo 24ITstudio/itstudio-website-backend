@@ -1,5 +1,5 @@
 import json
-import random, datetime
+import random
 
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
@@ -7,15 +7,17 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 if settings.DEBUG:
-    def log(*a): print(*a)
+    def log(*a): print(*a) # type: ignore
 else:
     def log(*_): pass
 from .models import VerifyCodeModel
 from .verify_code import send_code
 
-def gen_code() -> str:
-    code = '%04d' % random.randint(1000, 9999)
+def gen_code() -> int:
+    code = random.randint(1000, 9999)
     return code
+def format_code(i: int) -> str:
+    return '%04d' % i
 
 @csrf_exempt
 @require_http_methods(['POST'])
@@ -30,13 +32,12 @@ def send(request):
     def create_new():
         nonlocal obj
         try:
-            obj = VerifyCodeModel.objects.create(email=email, code=code)
+            obj = VerifyCodeModel.objects.create(email=email, code=format_code(code))
         except ValidationError:
             return JsonResponse(dict(detail="邮箱格式错误"), status=422)
-    
+
     if obj is not None:
-        ddl = datetime.datetime.now()-datetime.timedelta(minutes=10)
-        if obj.send_time < ddl:
+        if not obj.is_alive():
             obj.delete()
             res = create_new()
             if res is not None:
@@ -46,6 +47,7 @@ def send(request):
         res = create_new()
         if res is not None:
             return res
+    assert obj is not None
     obj.save()
 
     log(code)

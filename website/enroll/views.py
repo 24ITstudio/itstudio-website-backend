@@ -11,7 +11,8 @@ from .models import VerifyCodeModel, EnrollModel
 from .serializers import EnrollSerializer
 from rest_framework.request import Request
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, throttle_classes
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.response import Response
 
 from .verify_code import send_code
@@ -32,7 +33,11 @@ def err_response(msg: str, status = 400):
         status=status
     )
 
+class MinuteThrottle(AnonRateThrottle):
+    rate = "6/min"
+
 @api_view(['POST'])
+@throttle_classes([MinuteThrottle])
 def send(request: Request) -> Response:
     email = request.data.get('email', None)
     if email is None:

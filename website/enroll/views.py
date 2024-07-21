@@ -10,7 +10,9 @@ if settings.DEBUG:
     def log(*a): print(*a) # type: ignore
 else:
     def log(*_): pass
-from .models import VerifyCodeModel
+from .models import VerifyCodeModel, EnrollModel
+from .serializers import EnrollSerializer
+from rest_framework.viewsets import ModelViewSet
 from .verify_code import send_code
 
 def gen_code() -> int:
@@ -57,3 +59,8 @@ def send(request):
     else:
         return JsonResponse(dict(detail=err_msg) , status=500)
 
+
+class EnrollViewSet(ModelViewSet):
+   queryset = EnrollModel.objects.all()
+   serializer_class = EnrollSerializer
+ 

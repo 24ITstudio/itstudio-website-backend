@@ -22,5 +22,8 @@ from comment.views import CommentView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("code-send/", enrollViews.send),
+    path("enroll/", enrollViews.EnrollViewSet.as_view(
+        {'post': 'create'}
+    )),
     path("bbs/", CommentView.as_view()),
 ]

@@ -1,4 +1,5 @@
 
+from collections.abc import Sequence, Iterable
 from datetime import timedelta, datetime, timezone
 from django.db import models
 
@@ -27,8 +28,28 @@ class VerifyCodeModel(models.Model):
     def __str__(self) -> str:
         return self.email
 
-def genIntegerChoices(ls, start=0):
+
+def genIntegerChoices(ls: Sequence[str], start=0) -> Iterable['tuple[int, str]']:
     return list(zip(range(start, len(ls)+start), ls))
+
+
+class EnrollStatus(tuple):
+    def _center_as_0_len(self) -> int:
+        le = len(self)
+        (quo, rem) = divmod(le, 2)
+        assert rem == 1
+        return quo
+    def __new__(cls, iterable):
+        self = super().__new__(cls, iterable)
+        self.center_len = self._center_as_0_len()
+        return self
+    def center_index(self, item) -> int:
+        return self.index(item) - self.center_len
+    def get_item(self, idx: int):
+        return self[idx+self.center_len]
+
+
+CODE_HELP_TEXT = "验证码"
 
 class EnrollModel(models.Model):
     class Meta:
@@ -45,6 +66,7 @@ class EnrollModel(models.Model):
         "二审失败",
         "未录取",
     ])
+    # the order matters!
     departments = genIntegerChoices([
         "程序开发",
         "Web开发",
@@ -61,7 +83,7 @@ class EnrollModel(models.Model):
     content = models.CharField(max_length=200, verbose_name="为什么要加入爱特工作室")
     status = models.SmallIntegerField(choices=schedules, default=0, verbose_name="报名状态")
 
-    qq = models.PositiveBigIntegerField(unique=True, null=True)  # Optional QQ number
+    qq = models.PositiveBigIntegerField(unique=True, null=True, name="qq")
 
     def __str__(self):
         return self.name

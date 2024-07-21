@@ -34,6 +34,7 @@ def genIntegerChoices(ls: Sequence[str], start=0) -> Iterable['tuple[int, str]']
 
 
 class EnrollStatus(tuple):
+    center_len: int
     def _center_as_0_len(self) -> int:
         le = len(self)
         (quo, rem) = divmod(le, 2)
@@ -126,7 +127,7 @@ class EnrollModel(models.Model):
                       .format(key, val))
         if le != 1:
             raise cls.NotUniqueError("%d records found"%le)
-        item: EnrollModel = sets.first()
+        item: EnrollModel = sets.first() #type: ignore
         idx = item.status
         status = cls.get_status_str(idx)
         return (idx, status)

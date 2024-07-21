@@ -4,7 +4,7 @@ import random
 from django.core.exceptions import ValidationError
 from django.conf import settings
 if settings.DEBUG:
-    def log(*a): print(*a) # type: ignore
+    def log(*a): print(*a) #type: ignore
 else:
     def log(*_): pass
 from .models import VerifyCodeModel, EnrollModel
@@ -39,7 +39,7 @@ class MinuteThrottle(AnonRateThrottle):
 @api_view(['POST'])
 @throttle_classes([MinuteThrottle])
 def send(request: Request) -> Response:
-    email = request.data.get('email', None)
+    email = request.data.get('email', None) #type: ignore
     if email is None:
         return err_response("email is required but missing", status=422)
     log(email)
@@ -77,12 +77,13 @@ def send(request: Request) -> Response:
 class EnrollViewSet(ModelViewSet):
    queryset = EnrollModel.objects.all()
    serializer_class = EnrollSerializer
- 
+
 
 @api_view(['POST'])
 def get_status(request: Request) -> Response:
     try:
-        tup = EnrollModel.get_status(request.data)
+        # we know (isinstance(request.data, dict))
+        tup = EnrollModel.get_status(request.data) #type:ignore
     except KeyError as e:
         return err_response(str(e), status=400)
     except EnrollModel.NotFoundError as e:

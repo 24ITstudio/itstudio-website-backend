@@ -2,6 +2,10 @@
 from rest_framework import serializers
 from . import models
 
+_verr = serializers.ValidationError
+def raise_verr(msg: str, status = 400):
+    raise _verr(detail=msg, code=status)
+
 class EnrollSerializer(serializers.ModelSerializer):
     code = serializers.IntegerField(
         help_text=models.CODE_HELP_TEXT, write_only=True)
@@ -18,24 +22,22 @@ class EnrollSerializer(serializers.ModelSerializer):
                 if n == data:
                     idx = i
             if idx == -1:
-                raise serializers.ValidationError(
-                    detail=repr(data)+" is not a valid choice."
-                )
+                raise_verr(repr(data)+" is not a valid choice.")
         return idx
     def validate(self, attrs):
         email = attrs['email']
         obj = models.VerifyCodeModel.objects.filter(email=email).first()
         if obj is None:
-            raise serializers.ValidationError(
-                detail="no verfication code has been sent for your account yet",
-                code=404)
-        if obj.try_remove_if_unalive():
-            raise serializers.ValidationError(
-                detail="the verfication code for your account has been outdated",
-                code=410)
-        code = obj.code
+            raise_verr(
+                "no verfication code for your email currently",
+                404)
+        if obj.try_remove_if_unalive(): #type: ignore # we know it's non-None
+            raise_verr(
+                "the verfication code for your account has been outdated",
+                410)
+        code = obj.code #type: ignore
         if code != attrs['code']:
-            raise serializers.ValidationError(
-                detail="email verification code is wrong", code=400)
+            raise_verr(
+                "email verification code is wrong", 400)
         del attrs['code']
         return super().validate(attrs)

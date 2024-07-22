@@ -8,7 +8,11 @@ EmailFieldInst = models.EmailField(
 
 ALIVE_DURATION = timedelta(minutes=10)
 
+CODE_HELP_TEXT = "验证码"
+
 class VerifyCodeModel(models.Model):
+    class Meta:
+        verbose_name = verbose_name_plural = CODE_HELP_TEXT
     email = EmailFieldInst
     # this field allows at least 0-2147483647
     code = models.PositiveIntegerField()
@@ -50,11 +54,9 @@ class EnrollStatus(tuple):
         return self[idx+self.center_len]
 
 
-CODE_HELP_TEXT = "验证码"
-
 class EnrollModel(models.Model):
     class Meta:
-        verbose_name_plural = "报名信息"
+        verbose_name = verbose_name_plural = "报名信息"
     # the order matters and this is symmetric
     _shedules_data = EnrollStatus((
         "未录取",

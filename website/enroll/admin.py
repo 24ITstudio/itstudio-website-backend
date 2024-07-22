@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from . import models
+from . import models, export
 
 admin.site.register(models.VerifyCodeModel)
 
@@ -13,3 +13,5 @@ class EnrollAdmin(admin.ModelAdmin):
     search_fields = 'name',
     search_help_text = 'Search for name'
 
+
+admin.site.add_action(export.export_csv)

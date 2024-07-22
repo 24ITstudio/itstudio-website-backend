@@ -4,7 +4,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
 try:
-    from _ddl_conf import DDL as _DDL
+    from ._ddl_conf import DDL as _DDL
 except ImportError:
     import os
     val = os.getenv("DDL")

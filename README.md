@@ -5,6 +5,13 @@ Backend for itstudio website
 
 ## Conf
 
+### Enroll DDL
+
+search in order:
+
+- DDL variable in website/enroll/_ddl_conf.py
+- DDL env variable
+
 ### Email sending server 
 For security reasons,
 when it comes to email user and password,

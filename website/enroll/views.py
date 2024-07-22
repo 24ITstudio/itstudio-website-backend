@@ -16,6 +16,7 @@ from rest_framework.throttling import AnonRateThrottle
 from rest_framework.response import Response
 
 from .verify_code import send_code
+from .ddl import stop_after_ddl
 
 
 def gen_code() -> int:
@@ -36,6 +37,9 @@ def err_response(msg: str, status = 400):
 class MinuteThrottle(AnonRateThrottle):
     rate = "6/min"
 
+# XXX: if using decorator here, it just response
+# `Forbidden (CSRF cookie not set.)` all time, donno why :(
+# @stop_after_ddl
 @api_view(['POST'])
 @throttle_classes([MinuteThrottle])
 def send(request: Request) -> Response:
@@ -73,7 +77,7 @@ def send(request: Request) -> Response:
     else:
         return err_response(err_msg , status=500)
 
-
+@stop_after_ddl
 class EnrollViewSet(ModelViewSet):
    queryset = EnrollModel.objects.all()
    serializer_class = EnrollSerializer

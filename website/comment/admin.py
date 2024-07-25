@@ -22,8 +22,8 @@ def clamped_content(obj: models.comment):
 
 @admin.display(description="Time")
 def comment_time(obj: models.comment):
-    res = (obj.datetime.astimezone() # in local zone
-           .strftime('%m-%d %H:%M')  # MM-DD hh:mm
+    res = (obj.datetime
+           .strftime('%m-%d %H:%M %z')  # MM-DD hh:mm[ [+-]HHSS[.ffffff]]
            )
     return res
 

@@ -16,14 +16,15 @@ class CommentView(APIView):
 
     def post(self, request):
         content = request.data.get("content")
-        parent_id = request.data.get("parent")
-        def create_return():
-            comment.objects.create(content=content, parent=parent_id)
+        s_parent_id = request.data.get("parent")
+        def create_return(parent):
+            comment.objects.create(content=content, parent=parent)
             return Response({'code': 200, 'msg': '成功'}, status=200)
-        if parent_id is None:
-            return create_return()
-        flag = comment.objects.filter(parent=parent_id)
-        if flag:
-            return create_return()
+        if s_parent_id is None:
+            return create_return(None)
+        parent_id = int(s_parent_id)
+        parent = comment.objects.filter(id=parent_id)
+        if parent is not None:
+            return create_return(parent)
         else:
             return Response({'code': 404, 'detail': 'parent_id不存在'}, status=404)

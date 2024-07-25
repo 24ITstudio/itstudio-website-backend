@@ -1,4 +1,7 @@
 
+from django.urls import reverse
+from django.utils.html import format_html
+
 from django.contrib import admin
 from . import models
 
@@ -27,8 +30,18 @@ def comment_time(obj: models.comment):
            )
     return res
 
+@admin.display(description="parent")
+def parent(obj: models.comment):
+    parent = obj.parent
+    if parent is None:
+        return None
+    url = reverse('admin:{}_{}_change'.format(obj._meta.app_label, obj._meta.model_name),
+                    args=(parent.id,)
+    )
+    return format_html("<a href={}>{}</a>", url, parent.id)
 
 @admin.register(models.comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = [clamped_content, comment_time]
+    list_display = ['id', clamped_content, comment_time, parent]
+    list_display_links = [clamped_content]
 

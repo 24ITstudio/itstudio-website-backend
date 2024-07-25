@@ -30,6 +30,6 @@ apis = [
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include(apis),  # may delete this
-    path("api/"), include(apis)),
+    path("", include(apis)),  # may delete this
+    path("api/", include(apis)),
 ]

@@ -15,16 +15,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from enroll import views as enrollViews
 from comment.views import CommentView
 
-urlpatterns = [
-    path("admin/", admin.site.urls),
+apis = [
     path("code-send/", enrollViews.send), #type: ignore
     path("enroll/", enrollViews.EnrollViewSet.as_view( #type: ignore
         {'post': 'create'}
     )),
     path("progress/", enrollViews.get_status),
     path("bbs/", CommentView.as_view()),
+]
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", include(apis),  # may delete this
+    path("api/"), include(apis)),
 ]

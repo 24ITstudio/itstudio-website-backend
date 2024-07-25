@@ -104,8 +104,6 @@ class EnrollModel(models.Model):
         'email', 'phone', 'qq')
     STATUS_QUERY_FUZZY_CAND = ('name',)  # name is not unique
 
-    class NotFoundError(LookupError): pass
-    class NotUniqueError(LookupError): pass
     @classmethod
     def get_status(cls, d: dict) -> tuple[int, str]:
         key = val = ''
@@ -122,14 +120,7 @@ class EnrollModel(models.Model):
                     break
             if key == '': raise KeyError("no valid item used as key to look up")
         
-        sets = cls.objects.filter(**{key: val})
-        le = len(sets)
-        if le == 0:
-            raise cls.NotFoundError("found no record via {}={}"
-                      .format(key, val))
-        if le != 1:
-            raise cls.NotUniqueError("%d records found"%le)
-        item: EnrollModel = sets.first() #type: ignore
+        item = cls.objects.get(**{key: val})  # raises error iff not only one is found.
         idx = item.status
         status = cls.get_status_str(idx)
         return (idx, status)

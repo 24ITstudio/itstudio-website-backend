@@ -90,9 +90,9 @@ def get_status(request: Request) -> Response:
         tup = EnrollModel.get_status(request.data) #type:ignore
     except KeyError as e:
         return err_response(str(e), status=400)
-    except EnrollModel.NotFoundError as e:
+    except EnrollModel.DoesNotExist as e:
         return err_response(str(e), status=404)
-    except EnrollModel.NotUniqueError as e:
+    except EnrollModel.MultipleObjectsReturned as e:
         return err_response(str(e), status=406) # or maybe 300
     else:
         (idx, progress) = tup

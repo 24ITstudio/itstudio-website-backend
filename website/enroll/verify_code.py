@@ -8,7 +8,7 @@ for attr in (
     "EMAIL_HOST_PASSWORD",
     "DEFAULT_FROM_EMAIL"
 ):
-    globals()[attr] = getattr(settings, attr)
+    globals()[attr] = getattr(settings, attr, None)
 del attr
 
 try:

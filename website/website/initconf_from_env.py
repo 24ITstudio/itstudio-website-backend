@@ -27,9 +27,9 @@ def parse_bool(s):
         return False
 
 def parse_bool_like(val) -> bool:
-    err = "bool or 1/0 expected, but got {}"
+    err_msg = "bool or 1/0 expected, but got {}"
     def err():
-        raise ValueError(err.format(val))
+        raise ValueError(err_msg.format(val))
     le = len(val)
     if le == 0:
         err()

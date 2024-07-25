@@ -7,7 +7,7 @@ if settings.DEBUG:
     def log(*a): print(*a) #type: ignore
 else:
     def log(*_): pass
-from .models import VerifyCodeModel, EnrollModel
+from .models import VerifyCodeModel, EnrollModel, ALIVE_DURATION
 from .serializers import EnrollSerializer
 from rest_framework.request import Request
 from rest_framework.viewsets import ModelViewSet
@@ -36,6 +36,8 @@ def err_response(msg: str, status = 400):
 
 class MinuteThrottle(AnonRateThrottle):
     rate = "6/min"
+
+ALIVE_MINUTES = int(ALIVE_DURATION.total_seconds()) // 60
 
 # XXX: if using decorator here, it just response
 # `Forbidden (CSRF cookie not set.)` all time, donno why :(
@@ -73,7 +75,8 @@ def send(request: Request) -> Response:
 
     err_msg = send_code(code, [email])
     if err_msg is None:
-        return Response(data={}, status=200)
+        return Response(data=dict(alive_minutes=ALIVE_MINUTES),
+                        status=200)
     else:
         return err_response(err_msg , status=500)
 

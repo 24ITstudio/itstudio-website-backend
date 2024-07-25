@@ -8,7 +8,7 @@ from .serializers import commentSerializer
 
 class CommentView(APIView):
     def get(self, request):
-        limit = request.date.get('limit', 20)
+        limit = request.data.get('limit', 20)
         if type(limit) is not int:
             return Response(dict(detail="limit is not an integer"), status=422)
         comments = comment.objects.filter(parent=None)[:limit]

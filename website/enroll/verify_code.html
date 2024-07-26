@@ -1,5 +1,13 @@
 <html>
 <head>
+  <meta charset="utf-8">
+  <style>
+    #alive {
+      background-color: rgba(75, 206, 249, 0.572);
+      width: fit-content;
+      font-size: 75%;
+    }
+  </style>
   <!-- dollar-based template -->
   <script>
   // XXX: this seems to not work on Email Mobile App?
@@ -12,5 +20,6 @@
 你的验证码是：
 <a href="" onclick="writeToClip()">$code</a>
 </p>
+<div id="alive">有效期：$alive_minutes 分钟</div>
 </body>
 </html>

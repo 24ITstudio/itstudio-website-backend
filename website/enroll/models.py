@@ -1,12 +1,11 @@
 
 from collections.abc import Sequence, Iterable
-from datetime import timedelta, datetime, timezone
+from datetime import datetime, timezone
 from django.db import models
+from .email_livecycle import ALIVE_DURATION
 
 EmailFieldInst = models.EmailField(
     max_length=36, unique=True, verbose_name="邮箱")
-
-ALIVE_DURATION = timedelta(minutes=10)
 
 CODE_HELP_TEXT = "验证码"
 
@@ -17,7 +16,7 @@ class VerifyCodeModel(models.Model):
     # this field allows at least 0-2147483647
     code = models.PositiveIntegerField()
     send_time = models.DateTimeField(auto_now=True)
-    # XXX: auto_now=True will add a datetime with timezone.utc
+    # XXX: auto_now=True will add a datetime with timezone.utc when settings.USE_TZ
     #   a.k.a. an aware datetime
     def is_alive(self) -> bool:
         send_time = self.send_time

@@ -87,6 +87,7 @@ class EnrollModel(models.Model):
         "UI设计",
     ))
     name = models.CharField(max_length=20, verbose_name="姓名")
+    uid = models.PositiveBigIntegerField(unique=True, verbose_name="学号")
     major = models.CharField(max_length=20, verbose_name="年级专业")
     phone = models.PositiveBigIntegerField(unique=True, verbose_name="手机号码")
     # 0..9223372036854775807  (max of int64), bigger than 11 digits

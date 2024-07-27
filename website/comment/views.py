@@ -9,9 +9,12 @@ from .serializers import commentSerializer
 class CommentView(APIView):
     def get(self, request):
         limit = request.data.get('limit', 20)
+        start = request.data.get('start', 0)
         if type(limit) is not int:
             return Response(dict(detail="limit is not an integer"), status=422)
-        comments = comment.objects.filter(parent=None)[:limit]
+        if type(start) is not int:
+            return Response(dict(detail="start is not an integer"), status=422)
+        comments = comment.objects.filter(parent=None).reverse()[start:start+limit]
         serializer = commentSerializer(comments, many=True).data
         for i in serializer:
             sub_comment = comment.objects.filter(parent=i['id'])

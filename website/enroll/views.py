@@ -38,6 +38,9 @@ def err_response(msg: str, status = 400):
 class SendCodeThrottle(AnonRateThrottle):
     rate = "6/min"
 
+class GetStatusThrottle(AnonRateThrottle):
+    rate = "1/sec"
+
 # XXX: if using stop_after_ddl as the top decorator, it just response
 # `Forbidden (CSRF cookie not set.)` all time, donno why :(
 @api_view(['POST'])
@@ -86,6 +89,7 @@ class EnrollViewSet(ModelViewSet):
 
 
 @api_view(['POST'])
+@throttle_classes([GetStatusThrottle])
 def get_status(request: Request) -> Response:
     try:
         # we know (isinstance(request.data, dict))

@@ -9,14 +9,14 @@ from .serializers import commentSerializer
 
 
 class CommentView(APIView):
-    def get(self, request: Request):
+    def get(self, request: Request) -> Response:
         def parse_int(sth, default_if_omit):
-            p = request.query_params.get(sth)
+            p = request.query_params.get(sth) # str|None
             if p is None: res = default_if_omit
             else:
                 try: res = int(p)
                 except ValueError:
-                    raise ParseError(sth + " is not an integer")
+                    raise ParseError(sth + " is not an integer") # def: code=400
             return res
         limit = parse_int("limit", 20)
         start = parse_int("start", 0)
@@ -27,9 +27,9 @@ class CommentView(APIView):
             i['children'] = commentSerializer(sub_comment, many=True).data
         return Response(serializer)
 
-    def post(self, request):
-        content = request.data.get("content")
-        parent_id = request.data.get("parent")
+    def post(self, request: Request) -> Response:
+        content = request.data.get("content") #type: ignore
+        parent_id = request.data.get("parent") #type: ignore
         def create_return(parent):
             try:
                 comment.objects.create(content=content, parent=parent)

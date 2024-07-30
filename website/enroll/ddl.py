@@ -42,11 +42,11 @@ def stop_after_ddl(func_or_cls):
     else:
         assert callable(func_or_cls)
         class inner:
-            def __call__(self, request, *args, **kwd):
+            def __new__(cls, request, *args, **kwd):
                 if over_ddl():
-                    self.__call__ = after_ddl_response
+                    cls.__new__ = after_ddl_response #type: ignore
                     return after_ddl_response(request, args, kwd)
-                return func_or_cls(*args, **kwd)
+                return func_or_cls(request, *args, **kwd)
         return inner
 
 

@@ -35,15 +35,14 @@ def err_response(msg: str, status = 400):
         status=status
     )
 
-class MinuteThrottle(AnonRateThrottle):
+class SendCodeThrottle(AnonRateThrottle):
     rate = "6/min"
 
-
-# XXX: if using decorator here, it just response
+# XXX: if using stop_after_ddl as the top decorator, it just response
 # `Forbidden (CSRF cookie not set.)` all time, donno why :(
-# @stop_after_ddl
 @api_view(['POST'])
-@throttle_classes([MinuteThrottle])
+@throttle_classes([SendCodeThrottle])
+@stop_after_ddl
 def send(request: Request) -> Response:
     email = request.data.get('email', None) #type: ignore
     if email is None:

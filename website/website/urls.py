@@ -20,6 +20,7 @@ from enroll import views as enrollViews
 from comment.views import CommentView
 
 apis = [
+    path("ddl/", enrollViews.query_ddl),
     path("code-send/", enrollViews.send), #type: ignore
     path("enroll/", enrollViews.EnrollViewSet.as_view( #type: ignore
         {'post': 'create'}

@@ -17,7 +17,14 @@ from rest_framework.throttling import AnonRateThrottle
 from rest_framework.response import Response
 
 from .verify_code import send_code
-from .ddl import stop_after_ddl
+from .ddl import stop_after_ddl, over_ddl
+
+@api_view(['GET'])
+def query_ddl(_: Request) -> Response:
+    status = 200
+    if over_ddl():
+        status = 499
+    return Response({}, status=status)
 
 
 def gen_code() -> int:

@@ -19,7 +19,7 @@ def over_ddl():
 def after_ddl_response(request, args, kwargs):
     return Response(
         dict(detail="server has stoppped", since=_DDL),
-        status=503
+        status=499  # XXX: 499 is of non-standard response
     )
 
 def after_ddl_response_for_cls(request, *args, **kwargs):

@@ -39,5 +39,5 @@ if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
 
             """ + Solution
         )
-    sender._send_code = self.send_code #type: ignore
+    sender._send_code = sender.send_code #type: ignore
     sender.send_code = send_code

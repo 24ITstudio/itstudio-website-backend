@@ -16,13 +16,13 @@ try:
 except ImportError:
     pass
 
+_ADMINS = getattr(settings, "ADMINS", [])
+
 sender = Sender(
     auth_user=EMAIL_HOST_USER,
     auth_password=EMAIL_HOST_PASSWORD,
-    from_email=DEFAULT_FROM_EMAIL)
-
-send_code = sender.send_code
-
+    from_email=DEFAULT_FROM_EMAIL,
+    admins=_ADMINS)
 
 if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
     # overwrite send_code
@@ -39,3 +39,5 @@ if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
 
             """ + Solution
         )
+    sender._send_code = self.send_code #type: ignore
+    sender.send_code = send_code

@@ -16,7 +16,7 @@ from rest_framework.decorators import api_view, throttle_classes
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.response import Response
 
-from .verify_code import send_code
+from .verify_code import sender
 from .ddl import stop_after_ddl, over_ddl
 
 @api_view(['GET'])
@@ -82,7 +82,7 @@ def send(request: Request) -> Response:
 
     log(code)
 
-    err_msg = send_code(code, [email])
+    err_msg = sender.send_code(code, [email])
     if err_msg is None:
         return Response(data=dict(alive_minutes=ALIVE_MINUTES),
                         status=200)
@@ -91,9 +91,11 @@ def send(request: Request) -> Response:
 
 @stop_after_ddl
 class EnrollViewSet(ModelViewSet):
-   queryset = EnrollModel.objects.all()
-   serializer_class = EnrollSerializer
-
+    queryset = EnrollModel.objects.all()
+    serializer_class = EnrollSerializer
+    def create(self, request: Request, *args, **kwargs):
+       sender.send_enrollee_info(request.data)
+       return super().create(request, *args, **kwargs)
 
 @api_view(['POST'])
 @throttle_classes([GetStatusThrottle])

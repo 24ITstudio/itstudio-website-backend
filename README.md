@@ -5,6 +5,31 @@ Backend for itstudio website
 
 ## Conf
 
+
+### DEBUG
+
+init from env `WEBSITE_DEBUG`.
+
+if exists, overwrite value defined at settings.py
+
+### ALLOWED_HOSTS
+
+init from env,
+
+splited by `os.pathsep`.
+
+if exists, overwrite value defined at settings.py
+
+
+### ADMINS
+
+init from env `WEBSITE_ADMINS`
+
+splited by `os.pathsep`, and parsed by `email.utils.parseaddr`
+
+if exists, overwrite value defined at settings.py
+
+
 ### Enroll DDL
 
 search in order:

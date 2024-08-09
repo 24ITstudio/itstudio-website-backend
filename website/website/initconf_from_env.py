@@ -1,7 +1,7 @@
 "called by .settings"
 
 from os import getenv, pathsep
-
+from email.utils import parseaddr
 
 def init_by(settings_, key):
     "do nothing if env `key` is not set."
@@ -48,7 +48,18 @@ def parse_bool_like(val) -> bool:
         err()
 
 
+def init_list_env(setting_, name: str, env_name=None, mapper=None) -> bool:
+    if env_name is None: env_name = name
+    val = getenv(env_name)
+    if val is None: return False
+    ls = val.split(pathsep)
+    if mapper is not None:
+        ls = list(map(mapper, ls))
+    setting_[name] = ls
+    return True
+
 DEBUG_ENV = "WEBSITE_DEBUG"
+ADMINS_ENV = "WEBSITE_ADMINS"
 def init_debug(settings_):
     """get env WEBSITE_DEBUG.
     if true, then get ALLOWED_HOSTS, use os.pathsep split it.
@@ -63,15 +74,13 @@ def init_debug(settings_):
     if debug:
         return
     hosts_env = 'ALLOWED_HOSTS'
-    hosts_s = getenv(hosts_env)
-    def err():
+    if not init_list_env(settings_, "ALLOWED_HOSTS"):
         raise OSError("if not DEBUG, you must set "+hosts_env)
-
-    if hosts_s is None:
-        err()
-    hosts = hosts_s.split(pathsep)
-
-    settings_["ALLOWED_HOSTS"] = hosts
+    
+    def parse_admin(s: str):
+        return parseaddr(s)
+    init_list_env(settings_, "ADMINS", env_name=ADMINS_ENV,
+                  mapper=parse_admin)
 
 
 chk_init_envs = [

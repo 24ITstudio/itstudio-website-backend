@@ -7,7 +7,7 @@ admin.site.register(models.VerifyCodeModel)
 
 @admin.register(models.EnrollModel)
 class EnrollAdmin(admin.ModelAdmin):
-    list_display = "name", "email", "qq", "status"
+    list_display = "name", "email", "qq", "department", "status"
     list_editable = "status",
 
     search_fields = 'name',

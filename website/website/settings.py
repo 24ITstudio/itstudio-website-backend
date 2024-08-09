@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import re
 from pathlib import Path
 from .initconf_from_env import init as env_init
 
@@ -43,11 +44,23 @@ INSTALLED_APPS = [
     "rest_framework",
     "comment",
 ]
+
+
+# corsheaders conf
+
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:*",
-    "http://127.0.0.1:*",
+
+def _any_port(host):
+    'http://<host>:*'
+    return re.compile('^'+re.escape("http://" + host + ':') + r"\d+$")
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    _any_port("localhost"),
+    _any_port("127.0.0.1"),
 ]
+
+del _any_port
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

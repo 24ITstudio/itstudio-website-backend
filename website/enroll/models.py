@@ -1,5 +1,5 @@
 
-from collections.abc import Sequence, Iterable
+
 from datetime import datetime, timezone
 from django.db import models
 from .email_livecycle import ALIVE_DURATION
@@ -31,33 +31,45 @@ class VerifyCodeModel(models.Model):
     def __str__(self) -> str:
         return self.email
 
+class IntegerChoices:
+    '''Sequnence:
+      - `__iter__` yields tuple[int, str], and starts from `start`'''
+    start = 0
+    data: 'tuple[str,...]'
+    def __init__(self, ls: 'tuple[str,...]', start=None):
+        if start is not None: self.start = start
+        self.data = ls
+    def __iter__(self):
+        for (i, s) in enumerate(self.data, start=self.start):
+            yield (i, s)
+    def __len__(self): return len(self.data)
+    def __getitem__(self, i) -> str:
+        return self.data[i]
+    def index(self, ele): return self.data.index(ele)
 
-def genIntegerChoices(ls: Sequence[str], start=0) -> Iterable['tuple[int, str]']:
-    return list(zip(range(start, len(ls)+start), ls))
+genIntegerChoices = IntegerChoices
 
+def _center_as_0_len(sized) -> int:
+    le = len(sized)
+    (quo, rem) = divmod(le, 2)
+    assert rem == 1
+    return quo
 
-class EnrollStatus(tuple):
-    center_len: int
-    def _center_as_0_len(self) -> int:
-        le = len(self)
-        (quo, rem) = divmod(le, 2)
-        assert rem == 1
-        return quo
-    def __new__(cls, iterable):
-        self = super().__new__(cls, iterable)
-        self.center_len = self._center_as_0_len()
-        return self
-    def center_index(self, item) -> int:
-        return self.index(item) - self.center_len
-    def get_item(self, idx: int):
-        return self[idx+self.center_len]
+class EnrollStatus(IntegerChoices):
+    def __init__(self, ls):
+        start = -_center_as_0_len(ls)
+        super().__init__(ls, start)
+    def get_index(self, item) -> int:
+        return self.index(item) - self.start
+    def get_str(self, index: int):
+        return self[index+self.start]
 
 
 class EnrollModel(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = "报名信息"
     # the order matters and this is symmetric
-    _shedules_data = EnrollStatus((
+    schedules = EnrollStatus((
         "未录取",
         "二审失败",
         "面试失败",
@@ -70,14 +82,19 @@ class EnrollModel(models.Model):
     ))
     @classmethod
     def progress_idx(cls, status: str) -> int:
-        return cls._shedules_data.center_index(status)
+        '''@raises: ValueError'''
+        return cls.schedules.get_index(status)
     @classmethod
     def get_status_str(cls, idx: int) -> str:
-        return cls._shedules_data.get_item(idx)
-    schedules = genIntegerChoices(
-        _shedules_data,
-        -_shedules_data.center_len)
+        return cls.schedules.get_str(idx)
     # the order matters!
+    # serializers.EnrollSerializer requires this to have
+    #   __getitem__(i: int) -> str
+    # and SmallIntegerField requires this to be
+    #  Iterable[
+    #   tuple[`SmallInt`, str] |
+    #   tuple[str, Iterable[tuple[`SmallInt`, str]]]
+    #  ]
     departments = genIntegerChoices((
         "程序开发",
         "Web开发",

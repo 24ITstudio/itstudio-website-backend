@@ -6,13 +6,21 @@ _verr = serializers.ValidationError
 def raise_verr(msg: str, status = 400):
     raise _verr(detail=msg, code=status)
 
+_departments = models.EnrollModel.departments
 class EnrollSerializer(serializers.ModelSerializer):
-    code = serializers.IntegerField(
-        help_text=models.CODE_HELP_TEXT, write_only=True)
-    department = serializers.CharField()
     class Meta:
         model = models.EnrollModel
         exclude = ['status']
+    code = serializers.IntegerField(
+        help_text=models.CODE_HELP_TEXT, write_only=True)
+    department = serializers.CharField()  # make input as `str`,
+                                          # see validate_department
+    def to_representation(self, instance: models.EnrollModel):
+        """restore department to str"""
+        d_ord = instance.department
+        ret = super().to_representation(instance)
+        ret['department'] = _departments[d_ord]
+        return ret
     def validate_department(self, data: str):
         idx = -1
         if data.isdigit():

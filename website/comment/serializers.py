@@ -1,7 +1,8 @@
 from rest_framework import serializers
+from . import models
 
-
-class commentSerializer(serializers.Serializer):
-    id = serializers.IntegerField(label="id")
-    comment_time = serializers.DateTimeField(auto_now_add=True, label='datetime')
-    content = serializers.CharField(label='comment')
+class commentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.comment
+        fields = '__all__'
+        extra_kwargs = dict(parent=dict(write_only=True))

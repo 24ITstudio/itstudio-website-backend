@@ -10,7 +10,7 @@ _departments = models.EnrollModel.departments
 class EnrollSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EnrollModel
-        exclude = ['status']
+        exclude = ['status', 'comment']
     code = serializers.IntegerField(
         help_text=models.CODE_HELP_TEXT, write_only=True)
     department = serializers.CharField()  # make input as `str`,

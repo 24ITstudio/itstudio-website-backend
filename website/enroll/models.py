@@ -16,6 +16,7 @@ class VerifyCodeModel(models.Model):
     # this field allows at least 0-2147483647
     code = models.PositiveIntegerField()
     send_time = models.DateTimeField(auto_now=True)
+
     # XXX: auto_now=True will add a datetime with timezone.utc when settings.USE_TZ
     #   a.k.a. an aware datetime
     def is_alive(self) -> bool:
@@ -141,4 +142,3 @@ class EnrollModel(models.Model):
         idx = item.status
         status = cls.get_status_str(idx)
         return (idx, status)
->>>>>>> upstream/main

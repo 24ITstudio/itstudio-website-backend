@@ -8,3 +8,4 @@ class VerifyCodeModel(models.Model):
     # this field allows at least 0-2147483647
     code = models.PositiveIntegerField()
     send_time = models.DateTimeField(auto_now=True)
+    comment = models.TextField()

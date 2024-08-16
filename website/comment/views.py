@@ -30,12 +30,13 @@ class CommentView(APIView):
     def post(self, request: Request) -> Response:
         content = request.data.get("content") #type: ignore
         parent_id = request.data.get("parent") #type: ignore
-        qq = request.data.get("qq")
-        email = request.data.get("email")
-        api = request.data.get("api")
+        qq = request.data.get("qq", "null")
+        email = request.data.get("email", "null")
+        if qq == "null" and email == "null":
+            return Response(dict(detail="at least one of qq or email shall be given"), status=400)
         def create_return(parent):
             try:
-                comment.objects.create(content=content, parent=parent, qq=qq, email=email, api=api)
+                comment.objects.create(content=content, parent=parent, qq=qq, email=email)
             except IntegrityError as e:
                 return Response(dict(detail=str(e)), status=422)
             else:

@@ -30,9 +30,9 @@ class CommentView(APIView):
     def post(self, request: Request) -> Response:
         content = request.data.get("content") #type: ignore
         parent_id = request.data.get("parent") #type: ignore
-        qq = request.data.get("qq", "null")
-        email = request.data.get("email", "null")
-        if qq == "null" and email == "null":
+        qq = request.data.get("qq")
+        email = request.data.get("email")
+        if qq is None and email is None:
             return Response(dict(detail="at least one of qq or email shall be given"), status=400)
         def create_return(parent):
             try:

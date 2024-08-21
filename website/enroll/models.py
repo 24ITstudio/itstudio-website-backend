@@ -102,6 +102,7 @@ class EnrollModel(models.Model):
         "游戏开发",
         "APP开发",
         "UI设计",
+        "ios",
     ))
     name = models.CharField(max_length=20, verbose_name="姓名")
     uid = models.PositiveBigIntegerField(unique=True, verbose_name="学号")

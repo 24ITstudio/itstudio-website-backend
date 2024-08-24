@@ -10,7 +10,9 @@ _departments = models.EnrollModel.departments
 class EnrollSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EnrollModel
-        exclude = ['status', 'comment']
+        exclude = ['status']
+        # we have made comment as blank=True
+        # so comment is not required when POST
     code = serializers.IntegerField(
         help_text=models.CODE_HELP_TEXT, write_only=True)
     department = serializers.CharField()  # make input as `str`,

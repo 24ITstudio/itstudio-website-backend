@@ -69,7 +69,6 @@ class EnrollModel(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = "报名信息"
     # the order matters and this is symmetric
-    comment = models.TextField(blank=True, verbose_name="备注")
     schedules = EnrollStatus((
         "未录取",
         "二审失败",
@@ -115,6 +114,7 @@ class EnrollModel(models.Model):
     status = models.SmallIntegerField(choices=schedules, default=0, verbose_name="报名状态")
 
     qq = models.PositiveBigIntegerField(unique=True, null=True, name="qq", verbose_name="QQ号")
+    comment = models.TextField(blank=True, verbose_name="备注")
 
     def __str__(self):
         return self.name

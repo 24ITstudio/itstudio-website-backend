@@ -16,7 +16,6 @@ class VerifyCodeModel(models.Model):
     # this field allows at least 0-2147483647
     code = models.PositiveIntegerField()
     send_time = models.DateTimeField(auto_now=True)
-    comment = models.TextField()
     # XXX: auto_now=True will add a datetime with timezone.utc when settings.USE_TZ
     #   a.k.a. an aware datetime
     def is_alive(self) -> bool:
@@ -70,6 +69,7 @@ class EnrollModel(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = "报名信息"
     # the order matters and this is symmetric
+    comment = models.TextField(blank=True, verbose_name="备注")
     schedules = EnrollStatus((
         "未录取",
         "二审失败",

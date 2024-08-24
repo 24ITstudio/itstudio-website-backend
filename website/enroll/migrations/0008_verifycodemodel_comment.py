@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('enroll', '0006_enrollmodel_uid'),
+        ('enroll', '0007_alter_enrollmodel_department'),
     ]
 
     operations = [

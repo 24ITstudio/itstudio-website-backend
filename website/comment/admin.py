@@ -44,4 +44,9 @@ def parent(obj: models.comment):
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['id', clamped_content, comment_time, parent]
     list_display_links = [clamped_content]
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        for i in 'parent', 'qq', 'email':
+            form.base_fields[i].required = False
+        return form
 

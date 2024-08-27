@@ -12,6 +12,11 @@ class EnrollAdmin(admin.ModelAdmin):
 
     search_fields = 'name',
     search_help_text = 'Search for name'
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        for i in 'qq', 'content':
+            form.base_fields[i].required = False
+        return form
 
 
 admin.site.add_action(export.export_csv)

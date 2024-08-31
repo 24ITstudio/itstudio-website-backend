@@ -2,8 +2,10 @@
 from django.contrib import admin
 from . import models, export
 
-admin.site.register(models.VerifyCodeModel)
-
+@admin.site.register(models.VerifyCodeModel)
+class VerifyCodeAdmin(admin.ModelAdmin):
+    list_display = "email", "send_time"
+    list_editable = "send_time"
 
 @admin.register(models.EnrollModel)
 class EnrollAdmin(admin.ModelAdmin):

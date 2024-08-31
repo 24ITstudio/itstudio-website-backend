@@ -2,7 +2,7 @@
 from django.contrib import admin
 from . import models, export
 
-@admin.site.register(models.VerifyCodeModel)
+@admin.register(models.VerifyCodeModel)
 class VerifyCodeAdmin(admin.ModelAdmin):
     list_display = "email", "send_time"
     list_editable = "send_time"

@@ -5,7 +5,8 @@ from . import models, export
 @admin.register(models.VerifyCodeModel)
 class VerifyCodeAdmin(admin.ModelAdmin):
     list_display = "email", "send_time"
-    list_editable = "send_time",
+    # send_time is marked as `auto_now=True`, so not editable
+    #list_editable = "send_time",
 
 @admin.register(models.EnrollModel)
 class EnrollAdmin(admin.ModelAdmin):

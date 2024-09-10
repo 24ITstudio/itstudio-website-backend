@@ -12,7 +12,7 @@ class VerifyCodeAdmin(admin.ModelAdmin):
 class EnrollAdmin(admin.ModelAdmin):
     list_display = "name", "email", "qq", "department", "status", "comment"
     list_editable = "status", "comment"
-
+    list_filter = "department",
     search_fields = 'name',
     search_help_text = 'Search for name'
     def get_form(self, request, obj=None, **kwargs):

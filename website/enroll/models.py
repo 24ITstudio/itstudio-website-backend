@@ -115,7 +115,7 @@ class EnrollModel(models.Model):
     status = models.SmallIntegerField(choices=schedules, default=0, verbose_name="报名状态")
 
     qq = models.PositiveBigIntegerField(unique=True, null=True, name="qq", verbose_name="QQ号")
-    comment = models.TextField(blank=True, verbose_name="备注")
+    comment = models.CharField(max_length=64, blank=True, verbose_name="备注")
     # XXX: qq, content also need to be marked as not required in ./admin
 
     def __str__(self):

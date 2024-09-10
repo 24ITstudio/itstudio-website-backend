@@ -71,14 +71,14 @@ class EnrollModel(models.Model):
     # the order matters and this is symmetric
     schedules = EnrollStatus((
         "未录取",
-        "二审失败",
-        "面试失败",
-        "一审失败",
+        "二面失败",
+        "国庆题未完成",
+        "一面失败",
         "已报名", # idx: 0
-        "一审中",
-        "面试中",
-        "二审中",
-        "成功录取",
+        "一面已到",
+        "国庆题已完成",
+        "二面已参与",
+        "已录取",
     ))
     @classmethod
     def progress_idx(cls, status: str) -> int:
@@ -95,6 +95,7 @@ class EnrollModel(models.Model):
     #   tuple[`SmallInt`, str] |
     #   tuple[str, Iterable[tuple[`SmallInt`, str]]]
     #  ]
+    # NOTE: the order must match that of .admin.username2department
     departments = genIntegerChoices((
         "程序开发",
         "Web开发",

@@ -62,7 +62,7 @@ class EnrollStatus(IntegerChoices):
     def get_index(self, item) -> int:
         return self.index(item) - self.start
     def get_str(self, index: int):
-        return self[index+self.start]
+        return self[index - self.start]
 
 
 class EnrollModel(models.Model):
